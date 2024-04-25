@@ -50,7 +50,7 @@ class fXmlMark(fMark):
             xml_data.append([label, [[x1, y1], [x2, y2]], difficult, conf])
         return img_path, img_size, xml_data
 
-    def readin(self, img_path, img_size, objects, is_check_folder=None, img_suffix='.bmp'):
+    def readin(self, img_path, img_size, objects, img_suffix='.bmp'):
         if os.path.splitext(img_path)[1].lower() == '.xml': img_path = f'{os.path.splitext(img_path)[0]}{img_suffix}'
         img_dir, img_base = os.path.split(img_path)
         img_folder = os.path.basename(img_dir)
@@ -59,7 +59,6 @@ class fXmlMark(fMark):
             if not self.allow_empty:
                 if os.path.exists(xml_path): os.remove(xml_path)
                 return
-        if not is_check_folder: is_check_folder = self.is_check_folder
         object_data = [self.structure(mark) for mark in objects]
         # num(objects) == 1
         if len(object_data) == 1:
@@ -76,7 +75,7 @@ class fXmlMark(fMark):
         import xmltodict
         xml_data = xmltodict.unparse(xml_data, pretty=True)  # speed limit
         xml_data = xml_data[xml_data.find('\n') + len('\n'):]
-        fTxt().readin(xml_path, xml_data, is_check_folder=is_check_folder)
+        fTxt(is_check_folder=self.is_check_folder).readin(xml_path, xml_data)
 
     def structure(self, box):
         """
@@ -118,7 +117,7 @@ class fJsonMark(fMark):
         ]
         return img_base, img_size, shapes
 
-    def readin(self, img_path, img_size, shapes, is_check_folder=None, version='5.1.1', img_suffix='.bmp'):
+    def readin(self, img_path, img_size, shapes, version='5.1.1', img_suffix='.bmp'):
         if os.path.splitext(img_path)[1].lower() == '.json': img_path = f'{os.path.splitext(img_path)[0]}{img_suffix}'
         img_base = os.path.basename(img_path)
         json_path = f'{os.path.splitext(img_path)[0]}.json'
@@ -126,13 +125,12 @@ class fJsonMark(fMark):
             if not self.allow_empty:
                 if os.path.exists(json_path): os.remove(json_path)
                 return
-        if not is_check_folder: is_check_folder = self.is_check_folder
         json_data = {
             'version': version, 'flags': {}, 'shapes': [self.structure(mark) for mark in shapes],
             'imagePath': img_base, 'imageData': None,
             'imageHeight': img_size[0], 'imageWidth': img_size[1],
         }
-        fJson(indent=4).readin(json_path, json_data, is_check_folder=is_check_folder)  # speed limit
+        fJson(is_check_folder=self.is_check_folder, indent=4).readin(json_path, json_data)  # speed limit
 
     def structure(self, box):
         """
