@@ -12,9 +12,15 @@ class fMath:
         side_1 = self.distance(p2, p3)
         side_2 = self.distance(p1, p3)
         side_3 = self.distance(p1, p2)
-        angle_1 = math.degrees(math.acos((side_1 ** 2 - side_2 ** 2 - side_3 ** 2) / (-2 * side_2 * side_3)))
-        angle_2 = math.degrees(math.acos((side_2 ** 2 - side_1 ** 2 - side_3 ** 2) / (-2 * side_1 * side_3)))
-        angle_3 = math.degrees(math.acos((side_3 ** 2 - side_1 ** 2 - side_2 ** 2) / (-2 * side_1 * side_2)))
+        angle_1 = (side_1 ** 2 - side_2 ** 2 - side_3 ** 2) / (-2 * side_2 * side_3)
+        angle_2 = (side_2 ** 2 - side_1 ** 2 - side_3 ** 2) / (-2 * side_1 * side_3)
+        angle_3 = (side_3 ** 2 - side_1 ** 2 - side_2 ** 2) / (-2 * side_1 * side_2)
+        angle_1 = min(1.0, max(-1.0, angle_1))
+        angle_2 = min(1.0, max(-1.0, angle_2))
+        angle_3 = min(1.0, max(-1.0, angle_3))
+        angle_1 = math.degrees(math.acos(angle_1))
+        angle_2 = math.degrees(math.acos(angle_2))
+        angle_3 = math.degrees(math.acos(angle_3))
         return angle_1, angle_2, angle_3
 
     def iou(self, box1, box2):
